@@ -1,11 +1,5 @@
-# FROM maven:3.8.4-openjdk-11-slim 
-# COPY pom.xml .
-# COPY src ./src
-# RUN mvn clean package 
-# COPY target/*.jar /app.jar
-# ENTRYPOINT ["java","-jar","/app.jar"]
 # Use an official Maven image as the base image
-FROM maven:3.8.4-openjdk-11-slim AS build
+FROM maven:3.6-jdk-8-alpine AS build
 # Set the working directory in the container
 WORKDIR /app
 # Copy the pom.xml and the project files to the container
@@ -18,6 +12,6 @@ FROM openjdk:11-jre-slim
 # Set the working directory in the container
 WORKDIR /app
 # Copy the built JAR file from the previous stage to the container
-COPY --from=build /app/target/orders-service-example-0.0.1-SNAPSHOT-spring-boot.jar ./app.jar
+COPY --from=build /app/target/*.jar ./app.jar
 # Set the command to run the application
 ENTRYPOINT ["java","-jar","app.jar"]
