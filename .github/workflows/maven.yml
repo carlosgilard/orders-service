@@ -11,9 +11,10 @@ name: Java CI with Maven
 on:
   push:
     branches: [ "main", "develop"]
+  workflow_dispatch:
 
 jobs:
-  build:
+  BUILD:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -21,7 +22,16 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-        distribution: 'temurin'
+        distribution: 'zulu'
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Log in to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build and Push Docker Image 
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/payments-service:latest .
+        docker push ${{ secrets.DOCKER_USERNAME }}/payments-service:latest
