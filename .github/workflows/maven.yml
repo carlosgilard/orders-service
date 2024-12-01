@@ -1,20 +1,11 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main", "develop"]
+    branches: [ "main", "staging", "develop"]
   workflow_dispatch:
 
 jobs:
-
   TESTSONARCLOUD:
     runs-on: ubuntu-latest
     steps:
@@ -44,7 +35,11 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
     - name: Build and Push Docker Image 
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/orders-service:latest .
-        docker push ${{ secrets.DOCKER_USERNAME }}/orders-service:latest
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/shipping-service-${{steps.extract_branch.outputs.branch}}:latest .
+        docker push ${{ secrets.DOCKER_USERNAME }}/shipping-service-${{steps.extract_branch.outputs.branch}}:latest
