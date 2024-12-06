@@ -41,4 +41,24 @@ jobs:
     - name: Build and Push Docker Image 
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/orders-service-${{steps.extract_branch.outputs.branch}}:latest .
-        docker push ${{ secrets.DOCKER_USERNAME }}/orders-service-${{steps.extract_branch.outputs.branch}}:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/orders-service-${{steps.extract_branch.outputs.branch}}:latest  
+
+  test-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman tests
+        env:
+          BASE_URL: ${{ vars.BASE_URL }}
+        run: newman run postman-collection.json --env-var baseUrl=$BASE_URL
