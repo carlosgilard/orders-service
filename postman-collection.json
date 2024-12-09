@@ -21,9 +21,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{API_GATEWAY_IP}}/orders",
+					"raw": "{{baseUrl}}/orders",
 					"host": [
-						"{{API_GATEWAY_IP}}"
+						"{{baseUrl}}"
 					],
 					"path": [
 						"orders"
