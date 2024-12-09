@@ -21,7 +21,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/orders",
+					"raw": "http://{{baseUrl}}/orders",
 					"host": [
 						"{{baseUrl}}"
 					],
