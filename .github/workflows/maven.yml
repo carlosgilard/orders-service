@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-   TESTSONARCLOUD:
+    TESTSONARCLOUD:
      runs-on: ubuntu-latest
      steps:
      - uses: actions/checkout@v4
@@ -17,9 +17,9 @@ jobs:
      env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         
-   BUILD:
+    BUILD:
+    needs: TESTSONARCLOUD
     runs-on: ubuntu-latest
-    needs: TESTSONARCLOUD  
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -44,7 +44,7 @@ jobs:
         docker build -t ${{ secrets.DOCKER_USERNAME }}/orders-service-${{steps.extract_branch.outputs.branch}}:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/orders-service-${{steps.extract_branch.outputs.branch}}:latest  
 
-   test-api:
+    test-api:
           runs-on: ubuntu-latest
           needs: BUILD
           steps:
