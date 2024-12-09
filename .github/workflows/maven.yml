@@ -44,21 +44,33 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/orders-service-${{steps.extract_branch.outputs.branch}}:latest  
 
   test-api:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      - name: Install Newman
-        run: npm install -g newman
-
-      - name: Run Postman tests
-        env:
-          BASE_URL: ${{ vars.BASE_URL }}
-        run: newman run postman-collection.json --env-var baseUrl=$BASE_URL
+          runs-on: ubuntu-latest
+      
+          steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+      
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                node-version: '16'
+            - name: Install Newman
+              run: npm install -g newman
+            - name: Extract branch name
+              shell: bash
+              run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+              id: extract_branch
+            - name: Set BASE_URL based on branch
+              id: base_url
+              run: |
+                if [ "${{ steps.extract_branch.outputs.branch }}" == "main" ]; then
+                  echo "BASE_URL=${{ vars.MAIN_URL }}" >> $GITHUB_OUTPUT
+                elif [ "${{ steps.extract_branch.outputs.branch }}" == "develop" ]; then
+                  echo "BASE_URL=${{ vars.DEVELOP_URL }}" >> $GITHUB_OUTPUT
+                elif [ "${{ steps.extract_branch.outputs.branch }}" == "staging" ]; then
+                  echo "BASE_URL=${{ vars.STAGING_URL }}" >> $GITHUB_OUTPUT
+                fi
+            - name: Run Postman tests
+              env:
+                BASE_URL: ${{ steps.base_url.outputs.BASE_URL }}
+              run: newman run postman-collection.json --env-var baseUrl=$BASE_URL 
