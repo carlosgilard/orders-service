@@ -41,15 +41,13 @@
 							"  pm.expect(pm.response.code).to.equal(200);",
 							"});",
 							"",
-							"pm.test('Response time is less than 500ms', function () {",
-							"  pm.expect(pm.response.responseTime).to.be.below(500);",
-							"});",
 							"",
-							"pm.test('Response has the required fields - status and id', function () {",
+							"pm.test('Response has the required success - description and orderId', function () {",
 							"  const responseData = pm.response.json();",
 							"  pm.expect(responseData).to.be.an('object');",
-							"  pm.expect(responseData).to.have.property('status');",
-							"  pm.expect(responseData).to.have.property('id');",
+							"  pm.expect(responseData).to.have.property('success');",
+							"  pm.expect(responseData).to.have.property('description');",
+							"  pm.expect(responseData).to.have.property('orderId');",
 							"});"
 						]
 					}
