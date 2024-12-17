@@ -69,6 +69,7 @@ jobs:
             echo "BASE_URL=${{ vars.DEVELOP_URL }}" >> $GITHUB_OUTPUT
           elif [ "${{ steps.extract_branch.outputs.branch }}" == "staging" ]; then
             echo "BASE_URL=${{ vars.STAGING_URL }}" >> $GITHUB_OUTPUT
+          fi
       - name: Run Postman tests
         env:
           BASE_URL: ${{ steps.base_url.outputs.BASE_URL }}
